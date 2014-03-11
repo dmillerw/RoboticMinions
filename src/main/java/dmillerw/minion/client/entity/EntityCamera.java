@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.lwjgl.input.Mouse;
 
@@ -16,6 +17,7 @@ public class EntityCamera extends EntityLivingBase {
 
 	public static final int SCROLL_ZONE_PADDING = 5;
 	public static final float SCROLL_SPEED = 1F;
+	public static final float ROTATION_SPEED = 2F;
 
 	public static EntityCamera activeCamera;
 
@@ -29,7 +31,7 @@ public class EntityCamera extends EntityLivingBase {
 			activeCamera = new EntityCamera(Minecraft.getMinecraft().renderViewEntity.worldObj);
 			activePlayer = Minecraft.getMinecraft().renderViewEntity;
 
-			Minecraft.getMinecraft().renderViewEntity.worldObj.spawnEntityInWorld(activeCamera);
+			activeCamera.worldObj.spawnEntityInWorld(activeCamera);
 
 			activeCamera.copyLocationAndAnglesFrom(activePlayer);
 
@@ -64,32 +66,50 @@ public class EntityCamera extends EntityLivingBase {
 
 	@Override
 	public void onUpdate() {
+		Vec3 look = getLook(1.0F).normalize();
+
+		Vec3 up = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
+		Vec3 side = up.crossProduct(look).normalize();
+		Vec3 forward = side.crossProduct(up).normalize();
+
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;
 
 		setAngles(0, 0);
 
-		// Maybe temporary
-		int mouseX = Mouse.getX();
-		int mouseY = Mouse.getY();
-		int scroll = Mouse.getDWheel();
-		int width = Minecraft.getMinecraft().displayWidth;
-		int height = Minecraft.getMinecraft().displayHeight;
+		if (Mouse.isButtonDown(2)) {
+			int mouseDX = Mouse.getDX();
+			int mouseDY = Mouse.getDY();
 
-		if (mouseX <= SCROLL_ZONE_PADDING) {
-			motionX = SCROLL_SPEED;
-		} else if (mouseX >= width - SCROLL_ZONE_PADDING) {
-			motionX = -SCROLL_SPEED;
+			setAngles(mouseDX * ROTATION_SPEED, mouseDY * ROTATION_SPEED);
+		} else {
+			int mouseX = Mouse.getX();
+			int mouseY = Mouse.getY();
+			int scroll = Mouse.getDWheel();
+			int width = Minecraft.getMinecraft().displayWidth;
+			int height = Minecraft.getMinecraft().displayHeight;
+
+			if (scroll != 0) {
+				motionY = (SCROLL_SPEED * -scroll) / 100;
+			} else {
+				if (mouseX <= SCROLL_ZONE_PADDING) {
+					motionX += (side.xCoord * SCROLL_SPEED);
+					motionZ += (side.zCoord * SCROLL_SPEED);
+				} else if (mouseX >= width - SCROLL_ZONE_PADDING) {
+					motionX -= (side.xCoord * SCROLL_SPEED);
+					motionZ -= (side.zCoord * SCROLL_SPEED);
+				}
+
+				if (mouseY <= SCROLL_ZONE_PADDING) {
+					motionX -= (forward.xCoord * SCROLL_SPEED);
+					motionZ -= (forward.zCoord * SCROLL_SPEED);
+				} else if (mouseY >= height - SCROLL_ZONE_PADDING) {
+					motionX += (forward.xCoord * SCROLL_SPEED);
+					motionZ += (forward.zCoord * SCROLL_SPEED);
+				}
+			}
 		}
-
-		if (mouseY <= SCROLL_ZONE_PADDING) {
-			motionZ = -SCROLL_SPEED;
-		} else if (mouseY >= height - SCROLL_ZONE_PADDING) {
-			motionZ = SCROLL_SPEED;
-		}
-
-		motionY = (SCROLL_SPEED * -scroll) / 100;
 
 		super.onUpdate();
 	}
