@@ -81,8 +81,9 @@ public class EntityCamera extends EntityLivingBase {
 
 	@Override
 	public void onUpdate() {
-		Vec3 look = getLook(1.0F).normalize();
+		Minecraft mc = Minecraft.getMinecraft();
 
+		Vec3 look = getLook(1.0F).normalize();
 		Vec3 up = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
 		Vec3 side = up.crossProduct(look).normalize();
 		Vec3 forward = side.crossProduct(up).normalize();
@@ -94,7 +95,7 @@ public class EntityCamera extends EntityLivingBase {
 		setAngles(0, 0);
 
 		// Movement
-		if (Mouse.isButtonDown(2)) {
+		if ((Mouse.hasWheel() && Mouse.isButtonDown(2)) || Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
 			int mouseDX = Mouse.getDX();
 			int mouseDY = Mouse.getDY();
 
@@ -108,24 +109,24 @@ public class EntityCamera extends EntityLivingBase {
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
 			int scroll = Mouse.getDWheel();
-			int width = Minecraft.getMinecraft().displayWidth;
-			int height = Minecraft.getMinecraft().displayHeight;
+			int width = mc.displayWidth;
+			int height = mc.displayHeight;
 
 			if (scroll != 0) {
 				motionY = (SCROLL_SPEED * -scroll) / 100;
 			} else {
-				if (mouseX <= SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode())) {
+				if (mouseX <= SCROLL_ZONE_PADDING || Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode())) {
 					motionX += (side.xCoord * SCROLL_SPEED);
 					motionZ += (side.zCoord * SCROLL_SPEED);
-				} else if (mouseX >= width - SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode())) {
+				} else if (mouseX >= width - SCROLL_ZONE_PADDING || Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode())) {
 					motionX -= (side.xCoord * SCROLL_SPEED);
 					motionZ -= (side.zCoord * SCROLL_SPEED);
 				}
 
-				if (mouseY <= SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode())) {
+				if (mouseY <= SCROLL_ZONE_PADDING || Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
 					motionX -= (forward.xCoord * SCROLL_SPEED);
 					motionZ -= (forward.zCoord * SCROLL_SPEED);
-				} else if (mouseY >= height - SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode())) {
+				} else if (mouseY >= height - SCROLL_ZONE_PADDING || Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())) {
 					motionX += (forward.xCoord * SCROLL_SPEED);
 					motionZ += (forward.zCoord * SCROLL_SPEED);
 				}
