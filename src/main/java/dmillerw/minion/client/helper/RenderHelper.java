@@ -40,25 +40,27 @@ public class RenderHelper {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void renderLast(RenderWorldLastEvent evt) {
-		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelviewF);
-		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionF);
-		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
+		if (EntityCamera.isActive()) {
+			GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelviewF);
+			GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionF);
+			GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
 
-		float x = Mouse.getX();
-		float y = Mouse.getY();
+			float x = Mouse.getX();
+			float y = Mouse.getY();
 
-		FloatBuffer winZ = GLAllocation.createDirectFloatBuffer(1);
+			FloatBuffer winZ = GLAllocation.createDirectFloatBuffer(1);
 
-		GL11.glReadPixels((int) x, (int) y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
-		GLU.gluUnProject(x, y, 0F, modelviewF, projectionF, viewport, posClose);
-		GLU.gluUnProject(x, y, 1F, modelviewF, projectionF, viewport, posFar);
+			GL11.glReadPixels((int) x, (int) y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
+			GLU.gluUnProject(x, y, 0F, modelviewF, projectionF, viewport, posClose);
+			GLU.gluUnProject(x, y, 1F, modelviewF, projectionF, viewport, posFar);
 
-		close = Vec3.createVectorHelper(posClose.get(0), posClose.get(1), posClose.get(2));
-		far = Vec3.createVectorHelper(posFar.get(0), posFar.get(1), posFar.get(2));
+			close = Vec3.createVectorHelper(posClose.get(0), posClose.get(1), posClose.get(2));
+			far = Vec3.createVectorHelper(posFar.get(0), posFar.get(1), posFar.get(2));
 
-		// Draw selection box
-		if (EntityCamera.isActive() && EntityCamera.mouseover != null) {
-			drawBlockBounds(EntityCamera.activeCamera, EntityCamera.mouseover);
+			// Draw selection box
+			if (EntityCamera.mouseover != null) {
+				drawBlockBounds(EntityCamera.activeCamera, EntityCamera.mouseover);
+			}
 		}
 	}
 
