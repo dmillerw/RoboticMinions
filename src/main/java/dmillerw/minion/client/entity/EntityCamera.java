@@ -32,8 +32,10 @@ public class EntityCamera extends EntityLivingBase {
 
 	public static MovingObjectPosition mouseover;
 
+	private static boolean paused = false;
+
 	public static boolean isActive() {
-		return activeCamera != null;
+		return activeCamera != null && !paused;
 	}
 
 	/* SETTINGS CACHE */
@@ -69,6 +71,25 @@ public class EntityCamera extends EntityLivingBase {
 			activeCamera = null;
 
 			mouseover = null;
+		}
+	}
+
+	public static void pause() {
+		if (activeCamera != null && !paused) {
+			Minecraft.getMinecraft().renderViewEntity = activePlayer;
+			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
+
+			paused = true;
+		}
+	}
+
+	public static void resume() {
+		if (activeCamera != null && paused) {
+			Minecraft.getMinecraft().renderViewEntity = activeCamera;
+			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
+			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
+
+			paused = false;
 		}
 	}
 
