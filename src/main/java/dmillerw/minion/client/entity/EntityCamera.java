@@ -2,12 +2,19 @@ package dmillerw.minion.client.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import dmillerw.minion.client.helper.RenderHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
+import java.util.List;
 
 /**
  * @author dmillerw
@@ -22,6 +29,12 @@ public class EntityCamera extends EntityLivingBase {
 	public static EntityCamera activeCamera;
 
 	public static EntityLivingBase activePlayer;
+
+	public static MovingObjectPosition mouseover;
+
+	public static boolean isActive() {
+		return activeCamera != null;
+	}
 
 	/* SETTINGS CACHE */
 	public static int thirdPerson = 0;
@@ -54,6 +67,8 @@ public class EntityCamera extends EntityLivingBase {
 			activeCamera.worldObj.removeEntity(activeCamera);
 			activeCamera.setDead();
 			activeCamera = null;
+
+			mouseover = null;
 		}
 	}
 
@@ -78,12 +93,18 @@ public class EntityCamera extends EntityLivingBase {
 
 		setAngles(0, 0);
 
+		// Movement
 		if (Mouse.isButtonDown(2)) {
 			int mouseDX = Mouse.getDX();
 			int mouseDY = Mouse.getDY();
 
 			setAngles(mouseDX * ROTATION_SPEED, mouseDY * ROTATION_SPEED);
 		} else {
+			// TODO
+			// Handling proper mouse coordinates when the cursor isn't grabbed by the window
+			// Currently breaks if the player moves the mouse too fast and its position in the
+			// scroll zone isn't detected
+
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
 			int scroll = Mouse.getDWheel();
@@ -93,25 +114,71 @@ public class EntityCamera extends EntityLivingBase {
 			if (scroll != 0) {
 				motionY = (SCROLL_SPEED * -scroll) / 100;
 			} else {
-				if (mouseX <= SCROLL_ZONE_PADDING) {
+				if (mouseX <= SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode())) {
 					motionX += (side.xCoord * SCROLL_SPEED);
 					motionZ += (side.zCoord * SCROLL_SPEED);
-				} else if (mouseX >= width - SCROLL_ZONE_PADDING) {
+				} else if (mouseX >= width - SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode())) {
 					motionX -= (side.xCoord * SCROLL_SPEED);
 					motionZ -= (side.zCoord * SCROLL_SPEED);
 				}
 
-				if (mouseY <= SCROLL_ZONE_PADDING) {
+				if (mouseY <= SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode())) {
 					motionX -= (forward.xCoord * SCROLL_SPEED);
 					motionZ -= (forward.zCoord * SCROLL_SPEED);
-				} else if (mouseY >= height - SCROLL_ZONE_PADDING) {
+				} else if (mouseY >= height - SCROLL_ZONE_PADDING || Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode())) {
 					motionX += (forward.xCoord * SCROLL_SPEED);
 					motionZ += (forward.zCoord * SCROLL_SPEED);
 				}
 			}
 		}
 
+		// OTHER
+		mouseover = raytraceBlock();
+
 		super.onUpdate();
+	}
+
+	private Vec3 getMousePosition() {
+		Vec3 pos = this.getPosition(1.0F);
+		pos.xCoord += RenderHelper.close.xCoord;
+		pos.yCoord += RenderHelper.close.yCoord;
+		pos.zCoord += RenderHelper.close.zCoord;
+		return pos;
+	}
+
+	private Vec3 getFarPosition() {
+		Vec3 pos = this.getPosition(1.0F);
+		pos.xCoord += RenderHelper.far.xCoord;
+		pos.yCoord += RenderHelper.far.yCoord;
+		pos.zCoord += RenderHelper.far.zCoord;
+		return pos;
+	}
+
+	public MovingObjectPosition raytraceBlock() {
+		return this.worldObj.rayTraceBlocks(getMousePosition(), getFarPosition());
+	}
+
+	public Entity raytraceEntity() {
+		Vec3 start = getMousePosition();
+		Vec3 end = getFarPosition();
+
+		float expand = 1F;
+		List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(end.xCoord, end.yCoord, end.zCoord).expand(expand, expand, expand));
+
+		for (int i = 0; i < list.size(); i++) {
+			Entity entity = (Entity) list.get(i);
+			if (entity != null && this.canEntityBeSeen(entity) && entity.canBeCollidedWith()) {
+				float expand2 = Math.max(1F, entity.getCollisionBorderSize());
+				AxisAlignedBB aabb = entity.boundingBox.expand(expand2, expand2 * 1.25, expand2);
+				MovingObjectPosition mob = aabb.calculateIntercept(start, end);
+
+				if (mob != null) {
+					return entity;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/* IGNORE */

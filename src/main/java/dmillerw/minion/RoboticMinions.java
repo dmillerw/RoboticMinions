@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import dmillerw.minion.core.proxy.CommonProxy;
 import dmillerw.minion.lib.ModInfo;
+import dmillerw.minion.network.PacketPipeline;
 
 /**
  * @author dmillerw
@@ -20,6 +21,8 @@ public class RoboticMinions {
 	@SidedProxy(serverSide = ModInfo.SERVER, clientSide = ModInfo.CLIENT)
 	public static CommonProxy proxy;
 
+	public static PacketPipeline pipeline = new PacketPipeline();
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.preInit(event);
@@ -28,11 +31,13 @@ public class RoboticMinions {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.init(event);
+		pipeline.init();
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+		pipeline.postInit();
 	}
 
 }

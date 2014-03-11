@@ -1,6 +1,7 @@
 package dmillerw.minion.block;
 
-import dmillerw.minion.client.entity.EntityCamera;
+import dmillerw.minion.RoboticMinions;
+import dmillerw.minion.core.handler.GuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,10 +23,7 @@ public class BlockController extends Block {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		if (world.isRemote) {
-			EntityCamera.createCamera();
-		}
-
+		player.openGui(RoboticMinions.instance, GuiHandler.GUI_CONTROLLER, world, x, y, z);
 		return !player.isSneaking();
 	}
 
