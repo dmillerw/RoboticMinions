@@ -3,6 +3,7 @@ package dmillerw.minion.client.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.minion.client.helper.RenderHelper;
+import dmillerw.minion.entity.EntityMinion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,6 +32,8 @@ public class EntityCamera extends EntityLivingBase {
 	public static EntityLivingBase activePlayer;
 
 	public static MovingObjectPosition mouseover;
+
+	public static EntityMinion selectedMinion;
 
 	private static boolean paused = false;
 
@@ -71,6 +74,7 @@ public class EntityCamera extends EntityLivingBase {
 			activeCamera = null;
 
 			mouseover = null;
+			selectedMinion = null;
 		}
 	}
 
@@ -155,7 +159,11 @@ public class EntityCamera extends EntityLivingBase {
 		}
 
 		// OTHER
-		mouseover = raytraceBlock();
+		if (raytraceEntity() == null) {
+			mouseover = raytraceBlock();
+		} else {
+			mouseover = null;
+		}
 
 		super.onUpdate();
 	}
