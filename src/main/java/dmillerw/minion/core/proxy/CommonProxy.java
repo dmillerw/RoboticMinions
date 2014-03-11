@@ -18,7 +18,7 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		BlockHandler.init();
 
-		EntityRegistry.registerModEntity(EntityMinion.class, "minion", 1, RoboticMinions.instance, 64, 64, true);
+		EntityRegistry.registerModEntity(EntityMinion.class, "minion", 1, RoboticMinions.instance, 64, 3, true);
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(RoboticMinions.instance, new GuiHandler());
 	}

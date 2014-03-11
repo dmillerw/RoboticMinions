@@ -1,22 +1,25 @@
 package dmillerw.minion.entity;
 
+import dmillerw.minion.entity.ai.EntityAIPathfind;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 /**
  * @author dmillerw
  */
 public class EntityMinion extends EntitySheep {
 
+	public static final int TARGET_FUZZ = 2;
+
 	private MovingObjectPosition target;
 
 	public EntityMinion(World world) {
 		super(world);
 
-		setFleeceColor(0xFFFFFF);
+		this.tasks.addTask(9, new EntityAIPathfind(this, 1F));
+
+		setFleeceColor(0);
 
 		setSize(0.6F, 1.8F);
 	}
@@ -29,12 +32,22 @@ public class EntityMinion extends EntitySheep {
 		this.target = target;
 	}
 
+	public boolean atTarget() {
+		if (target != null) {
+			return posX <= target.blockX - TARGET_FUZZ && posX >= target.blockX + TARGET_FUZZ &&
+					posY <= target.blockY - TARGET_FUZZ && posY >= target.blockY + TARGET_FUZZ &&
+					posZ <= target.blockZ - TARGET_FUZZ && posZ >= target.blockZ + TARGET_FUZZ;
+		}
+
+		return false;
+	}
+
 	public void select() {
-		this.setFleeceColor(EntitySheep.getRandomFleeceColor(new Random()));
+		this.setFleeceColor(15);
 	}
 
 	public void deselect() {
-		this.setFleeceColor(0xFFFFFF);
+		this.setFleeceColor(0);
 	}
 
 }

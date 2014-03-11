@@ -2,6 +2,7 @@ package dmillerw.minion.client.gui;
 
 import dmillerw.minion.client.entity.EntityCamera;
 import dmillerw.minion.entity.EntityMinion;
+import dmillerw.minion.network.packet.PacketMoveMinion;
 import dmillerw.minion.network.packet.PacketSelectMinion;
 import dmillerw.minion.network.packet.PacketSpawnMinion;
 import net.minecraft.client.gui.GuiScreen;
@@ -32,12 +33,21 @@ public class GuiController extends GuiScreen {
 				EntityCamera.selectedMinion = null;
 				PacketSelectMinion.select(null);
 			}
-		} else if (button == 1 && EntityCamera.selectedMinion == null) {
-			MovingObjectPosition block = EntityCamera.activeCamera.raytraceBlock();
+		} else if (button == 1) {
+			if (EntityCamera.selectedMinion == null) {
+				MovingObjectPosition block = EntityCamera.activeCamera.raytraceBlock();
 
-			if (block != null && block.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-				ForgeDirection side = ForgeDirection.getOrientation(block.sideHit);
-				PacketSpawnMinion.spawnMinion((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ);
+				if (block != null && block.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+					ForgeDirection side = ForgeDirection.getOrientation(block.sideHit);
+					PacketSpawnMinion.spawnMinion((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ);
+				}
+			} else {
+				MovingObjectPosition block = EntityCamera.activeCamera.raytraceBlock();
+
+				if (block != null && block.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+					ForgeDirection side = ForgeDirection.getOrientation(block.sideHit);
+					PacketMoveMinion.move((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ);
+				}
 			}
 		}
 	}

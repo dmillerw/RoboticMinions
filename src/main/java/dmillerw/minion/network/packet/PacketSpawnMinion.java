@@ -1,9 +1,9 @@
 package dmillerw.minion.network.packet;
 
+import dmillerw.minion.entity.EntityMinion;
 import dmillerw.minion.network.AbstractPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -51,7 +51,7 @@ public class PacketSpawnMinion extends AbstractPacket {
 
 	@Override
 	public void handleServerSide(EntityPlayer player) {
-		EntitySheep minion = new EntitySheep(player.worldObj);
+		EntityMinion minion = new EntityMinion(player.worldObj);
 		minion.setPosition(x, y, z);
 		player.worldObj.spawnEntityInWorld(minion);
 	}

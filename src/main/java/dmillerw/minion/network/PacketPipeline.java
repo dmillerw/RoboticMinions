@@ -8,6 +8,7 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.minion.lib.ModInfo;
+import dmillerw.minion.network.packet.PacketMoveMinion;
 import dmillerw.minion.network.packet.PacketSelectMinion;
 import dmillerw.minion.network.packet.PacketSpawnMinion;
 import io.netty.buffer.ByteBuf;
@@ -101,6 +102,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 		// Packet registration
 		registerPacket(PacketSpawnMinion.class);
 		registerPacket(PacketSelectMinion.class);
+		registerPacket(PacketMoveMinion.class);
 	}
 
 	public void postInit() {
