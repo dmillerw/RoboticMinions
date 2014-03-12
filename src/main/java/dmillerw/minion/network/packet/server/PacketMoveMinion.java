@@ -1,4 +1,4 @@
-package dmillerw.minion.network.packet;
+package dmillerw.minion.network.packet.server;
 
 import dmillerw.minion.core.handler.MinionHandler;
 import dmillerw.minion.entity.EntityMinion;

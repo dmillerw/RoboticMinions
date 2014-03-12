@@ -8,9 +8,10 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.minion.lib.ModInfo;
-import dmillerw.minion.network.packet.PacketMoveMinion;
-import dmillerw.minion.network.packet.PacketSelectMinion;
-import dmillerw.minion.network.packet.PacketSpawnMinion;
+import dmillerw.minion.network.packet.client.PacketUpdateTarget;
+import dmillerw.minion.network.packet.server.PacketMoveMinion;
+import dmillerw.minion.network.packet.server.PacketSelectMinion;
+import dmillerw.minion.network.packet.server.PacketSpawnMinion;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
@@ -99,10 +100,13 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 	public void init() {
 		this.channels = NetworkRegistry.INSTANCE.newChannel(ModInfo.ID, this);
 
-		// Packet registration
+		// Server packet registration
 		registerPacket(PacketSpawnMinion.class);
 		registerPacket(PacketSelectMinion.class);
 		registerPacket(PacketMoveMinion.class);
+
+		// Client packet registration
+		registerPacket(PacketUpdateTarget.class);
 	}
 
 	public void postInit() {

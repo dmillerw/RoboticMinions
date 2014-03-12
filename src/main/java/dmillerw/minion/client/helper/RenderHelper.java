@@ -64,6 +64,8 @@ public class RenderHelper {
 				drawBlockBounds(EntityCamera.activeCamera, EntityCamera.mouseover);
 			}
 		}
+
+		//TODO Render selected minion movement target
 	}
 
 	@SubscribeEvent

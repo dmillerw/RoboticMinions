@@ -1,4 +1,4 @@
-package dmillerw.minion.network.packet;
+package dmillerw.minion.network.packet.server;
 
 import dmillerw.minion.entity.EntityMinion;
 import dmillerw.minion.network.AbstractPacket;
@@ -53,6 +53,7 @@ public class PacketSpawnMinion extends AbstractPacket {
 	public void handleServerSide(EntityPlayer player) {
 		EntityMinion minion = new EntityMinion(player.worldObj);
 		minion.setPosition(x, y, z);
+		minion.setOwner(player.getCommandSenderName());
 		player.worldObj.spawnEntityInWorld(minion);
 	}
 

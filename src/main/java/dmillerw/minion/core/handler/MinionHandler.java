@@ -18,8 +18,10 @@ public class MinionHandler {
 			deselectMinion(player);
 		}
 
-		minion.select();
-		minions.put(player.getCommandSenderName(), minion);
+		if (minion.getOwner().equals(player.getCommandSenderName())) {
+			minion.select();
+			minions.put(player.getCommandSenderName(), minion);
+		}
 	}
 
 	public static void deselectMinion(EntityPlayer player) {
