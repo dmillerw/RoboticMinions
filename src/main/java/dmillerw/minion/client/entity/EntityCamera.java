@@ -57,8 +57,8 @@ public class EntityCamera extends EntityLivingBase {
 			activeCamera.rotationPitch = 0;
 
 			Minecraft.getMinecraft().renderViewEntity = activeCamera;
-			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
+//			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
+//			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
 
 			activeCamera.setPositionAndRotation(activeCamera.posX, activeCamera.posY + 10, activeCamera.posZ, 0, 50);
 			activeCamera.setPosition(activeCamera.posX, activeCamera.posY + 10, activeCamera.posZ);
@@ -68,7 +68,7 @@ public class EntityCamera extends EntityLivingBase {
 	public static void destroyCamera() {
 		if (activeCamera != null) {
 			Minecraft.getMinecraft().renderViewEntity = activePlayer;
-			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
+//			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
 			activeCamera.worldObj.removeEntity(activeCamera);
 			activeCamera.setDead();
 			activeCamera = null;
@@ -81,7 +81,7 @@ public class EntityCamera extends EntityLivingBase {
 	public static void pause() {
 		if (activeCamera != null && !paused) {
 			Minecraft.getMinecraft().renderViewEntity = activePlayer;
-			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
+//			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
 
 			paused = true;
 		}
@@ -90,8 +90,8 @@ public class EntityCamera extends EntityLivingBase {
 	public static void resume() {
 		if (activeCamera != null && paused) {
 			Minecraft.getMinecraft().renderViewEntity = activeCamera;
-			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
+//			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
+//			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
 
 			paused = false;
 		}

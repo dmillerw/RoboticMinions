@@ -14,6 +14,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -61,6 +63,22 @@ public class RenderHelper {
 			if (EntityCamera.mouseover != null) {
 				drawBlockBounds(EntityCamera.activeCamera, EntityCamera.mouseover);
 			}
+		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void renderHand(RenderHandEvent event) {
+		if (EntityCamera.isActive()) {
+			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void renderGUI(RenderGameOverlayEvent event) {
+		if (EntityCamera.isActive()) {
+			event.setCanceled(true);
 		}
 	}
 
