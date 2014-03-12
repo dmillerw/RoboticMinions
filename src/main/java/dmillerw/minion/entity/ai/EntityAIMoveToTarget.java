@@ -6,13 +6,13 @@ import net.minecraft.entity.ai.EntityAIBase;
 /**
  * @author dmillerw
  */
-public class EntityAIPathfind extends EntityAIBase {
+public class EntityAIMoveToTarget extends EntityAIBase {
 
 	private final EntityMinion minion;
 
 	private final float speed;
 
-	public EntityAIPathfind(EntityMinion minion, float speed) {
+	public EntityAIMoveToTarget(EntityMinion minion, float speed) {
 		this.minion = minion;
 		this.speed = speed;
 	}

@@ -1,14 +1,14 @@
 package dmillerw.minion.entity;
 
-import dmillerw.minion.entity.ai.EntityAIPathfind;
-import net.minecraft.entity.passive.EntitySheep;
+import dmillerw.minion.entity.ai.EntityAIMoveToTarget;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 /**
  * @author dmillerw
  */
-public class EntityMinion extends EntitySheep {
+public class EntityMinion extends EntityLiving {
 
 	public static final int TARGET_FUZZ = 2;
 
@@ -17,11 +17,9 @@ public class EntityMinion extends EntitySheep {
 	public EntityMinion(World world) {
 		super(world);
 
-		this.tasks.addTask(9, new EntityAIPathfind(this, 1F));
+		this.tasks.addTask(0, new EntityAIMoveToTarget(this, 1F));
 
-		setFleeceColor(0);
-
-		setSize(0.6F, 1.8F);
+		setSize(1F, 1F);
 	}
 
 	public MovingObjectPosition getTarget() {
@@ -43,11 +41,11 @@ public class EntityMinion extends EntitySheep {
 	}
 
 	public void select() {
-		this.setFleeceColor(15);
+
 	}
 
 	public void deselect() {
-		this.setFleeceColor(0);
+
 	}
 
 }

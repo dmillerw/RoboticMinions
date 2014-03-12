@@ -8,10 +8,8 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import dmillerw.minion.RoboticMinions;
 import dmillerw.minion.client.entity.EntityCamera;
 import dmillerw.minion.client.helper.RenderHelper;
+import dmillerw.minion.client.render.RenderMinion;
 import dmillerw.minion.entity.EntityMinion;
-import net.minecraft.client.model.ModelSheep1;
-import net.minecraft.client.model.ModelSheep2;
-import net.minecraft.client.renderer.entity.RenderSheep;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -25,7 +23,7 @@ public class ClientProxy extends CommonProxy {
 
 		EntityRegistry.registerModEntity(EntityCamera.class, "camera", 0, RoboticMinions.instance, 64, 3, true);
 
-		RenderingRegistry.registerEntityRenderingHandler(EntityMinion.class, new RenderSheep(new ModelSheep2(), new ModelSheep1(), 0.7F));
+		RenderingRegistry.registerEntityRenderingHandler(EntityMinion.class, new RenderMinion());
 
 		MinecraftForge.EVENT_BUS.register(new RenderHelper());
 	}
