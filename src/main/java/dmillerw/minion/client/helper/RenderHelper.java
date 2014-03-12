@@ -30,8 +30,8 @@ import java.nio.IntBuffer;
  */
 public class RenderHelper {
 
-	public static Vec3 close;
-	public static Vec3 far;
+	public static Vec3 close = Vec3.createVectorHelper(0, 0, 0);
+	public static Vec3 far = Vec3.createVectorHelper(0, 0, 0);
 
 	private static FloatBuffer modelviewF = GLAllocation.createDirectFloatBuffer(16);
 	private static FloatBuffer projectionF = GLAllocation.createDirectFloatBuffer(16);

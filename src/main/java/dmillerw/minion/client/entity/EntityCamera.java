@@ -26,6 +26,7 @@ public class EntityCamera extends EntityLivingBase {
 	public static final int SCROLL_ZONE_PADDING = 5;
 	public static final float SCROLL_SPEED = 1F;
 	public static final float ROTATION_SPEED = 2F;
+	public static final float AABB_RANGE = 1F;
 
 	public static EntityCamera activeCamera;
 
@@ -192,18 +193,20 @@ public class EntityCamera extends EntityLivingBase {
 		Vec3 start = getMousePosition();
 		Vec3 end = getFarPosition();
 
-		float expand = 1F;
-		List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(end.xCoord, end.yCoord, end.zCoord).expand(expand, expand, expand));
+		MovingObjectPosition block = raytraceBlock();
 
-		for (int i = 0; i < list.size(); i++) {
-			Entity entity = (Entity) list.get(i);
-			if (entity != null && this.canEntityBeSeen(entity) && entity.canBeCollidedWith()) {
-				float expand2 = Math.max(1F, entity.getCollisionBorderSize());
-				AxisAlignedBB aabb = entity.boundingBox.expand(expand2, expand2 * 1.25, expand2);
-				MovingObjectPosition mob = aabb.calculateIntercept(start, end);
+		if (block != null) {
+			List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(block.blockX, block.blockY, block.blockZ, block.blockX + 1, block.blockY + 1, block.blockZ + 1).expand(AABB_RANGE, AABB_RANGE, AABB_RANGE));
 
-				if (mob != null) {
-					return entity;
+			for (int i = 0; i < list.size(); i++) {
+				Entity entity = (Entity) list.get(i);
+				if (entity != null && this.canEntityBeSeen(entity) && entity.canBeCollidedWith()) {
+					AxisAlignedBB aabb = entity.boundingBox.expand(entity.getCollisionBorderSize(), entity.getCollisionBorderSize(), entity.getCollisionBorderSize());
+					MovingObjectPosition mob = aabb.calculateIntercept(start, end);
+
+					if (mob != null) {
+						return entity;
+					}
 				}
 			}
 		}

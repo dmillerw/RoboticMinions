@@ -2,7 +2,8 @@ package dmillerw.minion.entity;
 
 import dmillerw.minion.entity.ai.EntityAIMoveToTarget;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 /**
@@ -10,38 +11,44 @@ import net.minecraft.world.World;
  */
 public class EntityMinion extends EntityLiving {
 
-	public static final int TARGET_FUZZ = 2;
+	private Vec3 target;
 
-	private MovingObjectPosition target;
+	private EntityAIMoveToTarget targetAI;
 
 	public EntityMinion(World world) {
 		super(world);
 
-		this.tasks.addTask(0, new EntityAIMoveToTarget(this, 1F));
+		targetAI = new EntityAIMoveToTarget(this, 3F);
+		this.tasks.addTask(0, targetAI);
 
 		setSize(1F, 1F);
 	}
 
-	public MovingObjectPosition getTarget() {
+	@Override
+	protected boolean isAIEnabled() {
+		return true;
+	}
+
+	@Override
+	protected void applyEntityAttributes() {
+		super.applyEntityAttributes();
+
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(256.0D);
+	}
+
+	public Vec3 getTarget() {
 		return target;
 	}
 
-	public void setTarget(MovingObjectPosition target) {
+	public void setTarget(Vec3 target) {
 		this.target = target;
-	}
-
-	public boolean atTarget() {
 		if (target != null) {
-			return posX <= target.blockX - TARGET_FUZZ && posX >= target.blockX + TARGET_FUZZ &&
-					posY <= target.blockY - TARGET_FUZZ && posY >= target.blockY + TARGET_FUZZ &&
-					posZ <= target.blockZ - TARGET_FUZZ && posZ >= target.blockZ + TARGET_FUZZ;
+			targetAI.startExecuting();
 		}
-
-		return false;
 	}
 
 	public void select() {
-
+		jump();
 	}
 
 	public void deselect() {

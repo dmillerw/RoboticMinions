@@ -6,7 +6,6 @@ import dmillerw.minion.network.AbstractPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
 /**
@@ -57,7 +56,7 @@ public class PacketMoveMinion extends AbstractPacket {
 		EntityMinion entity = MinionHandler.getSelectedMinion(player);
 
 		if (entity != null) {
-			entity.setTarget(new MovingObjectPosition((int) x, (int) y, (int) z, 0, Vec3.createVectorHelper(0, 0, 0), false));
+			entity.setTarget(Vec3.createVectorHelper(x, y, z));
 		}
 	}
 

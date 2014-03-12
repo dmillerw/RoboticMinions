@@ -2,6 +2,7 @@ package dmillerw.minion.entity.ai;
 
 import dmillerw.minion.entity.EntityMinion;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.util.Vec3;
 
 /**
  * @author dmillerw
@@ -19,17 +20,22 @@ public class EntityAIMoveToTarget extends EntityAIBase {
 
 	@Override
 	public boolean shouldExecute() {
-		return minion.getTarget() != null && !minion.atTarget();
+		return minion.getTarget() != null;
 	}
 
 	@Override
 	public boolean continueExecuting() {
-		return !minion.getNavigator().noPath();
+		if (minion.getNavigator().noPath()) {
+			minion.setTarget((Vec3) null);
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public void startExecuting() {
-		minion.getNavigator().tryMoveToXYZ(minion.getTarget().blockX, minion.getTarget().blockY, minion.getTarget().blockZ, speed);
+		minion.getNavigator().tryMoveToXYZ(minion.getTarget().xCoord, minion.getTarget().yCoord, minion.getTarget().zCoord, speed);
 	}
 
 }
