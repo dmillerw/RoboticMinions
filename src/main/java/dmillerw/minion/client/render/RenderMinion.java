@@ -3,12 +3,10 @@ package dmillerw.minion.client.render;
 import dmillerw.minion.client.entity.EntityCamera;
 import dmillerw.minion.client.model.ModelMinion;
 import dmillerw.minion.lib.ModInfo;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 /**
  * @author dmillerw
@@ -23,28 +21,11 @@ public class RenderMinion extends RendererLivingEntity {
 
 	@Override
 	public void doRender(EntityLivingBase entity, double x, double y, double z, float id, float fk) {
-		super.doRender(entity, x, y, z, id, fk);
-
-		//FIXME :(
 		if (EntityCamera.selectedMinion != null && entity.getEntityId() == EntityCamera.selectedMinion.getEntityId()) {
-			GL11.glPushMatrix();
-
-			GL11.glTranslated(x, y, z);
-
-			Tessellator t = Tessellator.instance;
-
-			t.startDrawingQuads();
-			t.setColorOpaque(255, 0, 0);
-
-			t.addVertex(0.5, 0.5, 0);
-			t.addVertex(0.5, 0, 0);
-			t.addVertex(0, 0, 0);
-			t.addVertex(0, 0.5, 0);
-
-			t.draw();
-
-			GL11.glPopMatrix();
+			//FIXME
 		}
+
+		super.doRender(entity, x, y, z, id, fk);
 	}
 
 	@Override
