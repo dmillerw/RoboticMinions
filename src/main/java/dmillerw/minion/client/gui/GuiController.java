@@ -2,9 +2,9 @@ package dmillerw.minion.client.gui;
 
 import dmillerw.minion.client.entity.EntityCamera;
 import dmillerw.minion.entity.EntityMinion;
-import dmillerw.minion.network.packet.PacketMoveMinion;
-import dmillerw.minion.network.packet.PacketSelectMinion;
-import dmillerw.minion.network.packet.PacketSpawnMinion;
+import dmillerw.minion.network.packet.server.PacketMoveMinion;
+import dmillerw.minion.network.packet.server.PacketSelectMinion;
+import dmillerw.minion.network.packet.server.PacketSpawnMinion;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;

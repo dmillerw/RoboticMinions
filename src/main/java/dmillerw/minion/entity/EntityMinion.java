@@ -1,7 +1,6 @@
 package dmillerw.minion.entity;
 
 import dmillerw.minion.RoboticMinions;
-import dmillerw.minion.entity.ai.EntityAIMoveToTarget;
 import dmillerw.minion.network.packet.client.PacketUpdateTarget;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -21,20 +20,15 @@ public class EntityMinion extends EntityLiving {
 
 	private String owner = "";
 
-	private EntityAIMoveToTarget targetAI;
+//	private EntityAIMoveToTarget targetAI;
 
 	public EntityMinion(World world) {
 		super(world);
 
-		targetAI = new EntityAIMoveToTarget(this, 3F);
-		this.tasks.addTask(0, targetAI);
+//		targetAI = new EntityAIMoveToTarget(this, 3F);
+//		this.tasks.addTask(0, targetAI);
 
 		setSize(1F, 1F);
-	}
-
-	@Override
-	public void entityInit() {
-
 	}
 
 	@Override
@@ -56,7 +50,11 @@ public class EntityMinion extends EntityLiving {
 	public void setTarget(Vec3 target) {
 		this.target = target;
 		if (target != null) {
-			targetAI.startExecuting();
+			getNavigator().tryMoveToXYZ(target.xCoord, target.yCoord, target.zCoord, 1F);
+		} else {
+			if (getNavigator().getPath() != null) {
+				getNavigator().clearPathEntity();
+			}
 		}
 
 		if (!worldObj.isRemote && !(owner.isEmpty())) {
