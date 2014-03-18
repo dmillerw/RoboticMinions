@@ -1,22 +1,28 @@
 package dmillerw.minion.client.render;
 
+import com.google.common.collect.Maps;
 import dmillerw.minion.client.entity.EntityCamera;
-import dmillerw.minion.client.model.ModelMinion;
-import dmillerw.minion.lib.ModInfo;
+import dmillerw.minion.client.helper.SkinHelper;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Map;
 
 /**
  * @author dmillerw
  */
 public class RenderMinion extends RendererLivingEntity {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/model/minion.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("textures/entity/steve.png");
+
+	public static Map<String, AbstractClientPlayer> cachedSkins = Maps.newHashMap();
 
 	public RenderMinion() {
-		super(new ModelMinion(), 1F);
+		super(new ModelBiped(), 1F);
 	}
 
 	@Override
@@ -35,7 +41,7 @@ public class RenderMinion extends RendererLivingEntity {
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		return TEXTURE;
+		return SkinHelper.getSkin("Notch");
 	}
 
 }

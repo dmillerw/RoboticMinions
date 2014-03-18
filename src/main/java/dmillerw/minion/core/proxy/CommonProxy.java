@@ -9,12 +9,15 @@ import dmillerw.minion.RoboticMinions;
 import dmillerw.minion.block.BlockHandler;
 import dmillerw.minion.core.handler.GuiHandler;
 import dmillerw.minion.entity.EntityMinion;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovingObjectPosition;
 
 /**
  * @author dmillerw
  */
 public class CommonProxy {
 
+	/* INITIALIZERS */
 	public void preInit(FMLPreInitializationEvent event) {
 		BlockHandler.init();
 
@@ -28,6 +31,15 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
+
+	}
+
+	/* MINION HANDLING */
+	public void onEntityClicked(EntityPlayer player, EntityMinion minion, int button) {
+
+	}
+
+	public void onBlockClicked(EntityPlayer player, MovingObjectPosition block, int button) {
 
 	}
 

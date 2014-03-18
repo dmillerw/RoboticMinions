@@ -1,13 +1,8 @@
 package dmillerw.minion.entity;
 
-import dmillerw.minion.RoboticMinions;
-import dmillerw.minion.network.packet.client.PacketUpdateTarget;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -16,19 +11,23 @@ import net.minecraft.world.World;
  */
 public class EntityMinion extends EntityLiving {
 
+	public static final int DATA_OWNER = 20;
+
 	private Vec3 target;
 
 	private String owner = "";
 
-//	private EntityAIMoveToTarget targetAI;
-
 	public EntityMinion(World world) {
 		super(world);
 
-//		targetAI = new EntityAIMoveToTarget(this, 3F);
-//		this.tasks.addTask(0, targetAI);
-
 		setSize(1F, 1F);
+	}
+
+	@Override
+	public void entityInit() {
+		super.entityInit();
+
+		dataWatcher.addObject(DATA_OWNER, "");
 	}
 
 	@Override
@@ -56,21 +55,15 @@ public class EntityMinion extends EntityLiving {
 				getNavigator().clearPathEntity();
 			}
 		}
-
-		if (!worldObj.isRemote && !(owner.isEmpty())) {
-			EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(owner);
-			PacketUpdateTarget packet = new PacketUpdateTarget(getEntityId(), target);
-			RoboticMinions.pipeline.sendTo(packet, (EntityPlayerMP) player);
-		}
 	}
 
 	public String getOwner() {
-		return owner;
+		return dataWatcher.getWatchableObjectString(DATA_OWNER);
 	}
 
 	public void setOwner(String owner) {
 		this.owner = owner;
-
+		dataWatcher.updateObject(DATA_OWNER, owner);
 	}
 
 	public void select() {
@@ -102,7 +95,7 @@ public class EntityMinion extends EntityLiving {
 
 		if (nbt.hasKey("target")) {
 			NBTTagCompound targetNBT = nbt.getCompoundTag("target");
-			setTarget(Vec3.createVectorHelper(targetNBT.getDouble("x"), targetNBT.getDouble("xy"), targetNBT.getDouble("z")));
+			setTarget(Vec3.createVectorHelper(targetNBT.getDouble("x"), targetNBT.getDouble("y"), targetNBT.getDouble("z")));
 		} else {
 			setTarget(null);
 		}

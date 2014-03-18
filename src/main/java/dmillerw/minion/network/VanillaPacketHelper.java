@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.util.Vec3;
 
 import java.io.IOException;
 
@@ -36,8 +37,9 @@ public class VanillaPacketHelper {
 	 */
 	public static void writeNBTTagCompound(NBTTagCompound nbt, ByteBuf buffer) throws IOException {
 		if (nbt == null) {
-			buffer.writeShort(-1);
+			buffer.writeBoolean(false);
 		} else {
+			buffer.writeBoolean(true);
 			byte[] bytes = CompressedStreamTools.compress(nbt);
 			buffer.writeShort((short) bytes.length);
 			buffer.writeBytes(bytes);
@@ -48,15 +50,13 @@ public class VanillaPacketHelper {
 	 * Reads a compressed NBTTagCompound from the specified buffer
 	 */
 	public static NBTTagCompound readNBTTagCompound(ByteBuf buffer) throws IOException {
-		short length = buffer.readShort();
-
-		if (length < 0) {
+		if (!buffer.readBoolean()) {
 			return null;
-		} else {
-			byte[] bytes = new byte[length];
-			buffer.readBytes(bytes);
-			return CompressedStreamTools.decompress(bytes);
 		}
+
+		byte[] bytes = new byte[buffer.readShort()];
+		buffer.readBytes(bytes);
+		return CompressedStreamTools.decompress(bytes);
 	}
 
 	/**
@@ -64,8 +64,9 @@ public class VanillaPacketHelper {
 	 */
 	public static void writeItemStack(ItemStack stack, ByteBuf buffer) throws IOException {
 		if (stack == null) {
-			buffer.writeShort(-1);
+			buffer.writeBoolean(false);
 		} else {
+			buffer.writeBoolean(true);
 			buffer.writeShort(Item.getIdFromItem(stack.getItem()));
 			buffer.writeByte(stack.stackSize);
 			buffer.writeShort(stack.getItemDamage());
@@ -80,20 +81,45 @@ public class VanillaPacketHelper {
 	}
 
 	/**
-	 * Reads an ItemStack from this buffer
+	 * Reads an ItemStack from the specified buffer
 	 */
 	public static ItemStack readItemStack(ByteBuf buffer) throws IOException {
-		ItemStack itemstack = null;
-		short itemID = buffer.readShort();
-
-		if (itemID >= 0) {
-			byte size = buffer.readByte();
-			short damage = buffer.readShort();
-			itemstack = new ItemStack(Item.getItemById(itemID), size, damage);
-			itemstack.stackTagCompound = VanillaPacketHelper.readNBTTagCompound(buffer);
+		if (!buffer.readBoolean()) {
+			return null;
 		}
 
-		return itemstack;
+		short itemID = buffer.readShort();
+		byte size = buffer.readByte();
+		short damage = buffer.readShort();
+		ItemStack stack = new ItemStack(Item.getItemById(itemID), size, damage);
+		stack.stackTagCompound = VanillaPacketHelper.readNBTTagCompound(buffer);
+
+		return stack;
+	}
+
+	/**
+	 * Writes a vanilla Vec3 object to the specified buffer
+	 */
+	public static void writeVec3(Vec3 vec, ByteBuf buffer) {
+		if (vec == null) {
+			buffer.writeBoolean(false);
+		} else {
+			buffer.writeBoolean(true);
+			buffer.writeDouble(vec.xCoord);
+			buffer.writeDouble(vec.yCoord);
+			buffer.writeDouble(vec.zCoord);
+		}
+	}
+
+	/**
+	 * Reads a vanilla Vec3 object from this buffer
+	 */
+	public static Vec3 readVec3(ByteBuf buffer) {
+		if (!buffer.readBoolean()) {
+			return null;
+		}
+
+		return Vec3.createVectorHelper(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 	}
 
 }

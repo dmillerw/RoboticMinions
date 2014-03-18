@@ -3,19 +3,16 @@ package dmillerw.minion.client.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.minion.client.helper.RenderHelper;
+import dmillerw.minion.core.helper.RaytraceHelper;
 import dmillerw.minion.entity.EntityMinion;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
-import java.util.List;
 
 /**
  * @author dmillerw
@@ -26,7 +23,6 @@ public class EntityCamera extends EntityLivingBase {
 	public static final int SCROLL_ZONE_PADDING = 5;
 	public static final float SCROLL_SPEED = 1F;
 	public static final float ROTATION_SPEED = 2F;
-	public static final float AABB_RANGE = 1F;
 
 	public static EntityCamera activeCamera;
 
@@ -42,9 +38,6 @@ public class EntityCamera extends EntityLivingBase {
 		return activeCamera != null && !paused;
 	}
 
-	/* SETTINGS CACHE */
-	public static int thirdPerson = 0;
-
 	public static void createCamera() {
 		if (activeCamera == null) {
 			activeCamera = new EntityCamera(Minecraft.getMinecraft().renderViewEntity.worldObj);
@@ -58,8 +51,6 @@ public class EntityCamera extends EntityLivingBase {
 			activeCamera.rotationPitch = 0;
 
 			Minecraft.getMinecraft().renderViewEntity = activeCamera;
-//			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-//			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
 
 			activeCamera.setPositionAndRotation(activeCamera.posX, activeCamera.posY + 10, activeCamera.posZ, 0, 50);
 			activeCamera.setPosition(activeCamera.posX, activeCamera.posY + 10, activeCamera.posZ);
@@ -69,7 +60,6 @@ public class EntityCamera extends EntityLivingBase {
 	public static void destroyCamera() {
 		if (activeCamera != null) {
 			Minecraft.getMinecraft().renderViewEntity = activePlayer;
-//			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
 			activeCamera.worldObj.removeEntity(activeCamera);
 			activeCamera.setDead();
 			activeCamera = null;
@@ -82,7 +72,6 @@ public class EntityCamera extends EntityLivingBase {
 	public static void pause() {
 		if (activeCamera != null && !paused) {
 			Minecraft.getMinecraft().renderViewEntity = activePlayer;
-//			Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPerson;
 
 			paused = true;
 		}
@@ -91,8 +80,6 @@ public class EntityCamera extends EntityLivingBase {
 	public static void resume() {
 		if (activeCamera != null && paused) {
 			Minecraft.getMinecraft().renderViewEntity = activeCamera;
-//			thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-//			Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
 
 			paused = false;
 		}
@@ -160,8 +147,8 @@ public class EntityCamera extends EntityLivingBase {
 		}
 
 		// OTHER
-		if (raytraceEntity() == null) {
-			mouseover = raytraceBlock();
+		if (RaytraceHelper.raytraceEntity(worldObj, getClosePosition(), getFarPosition()) == null) {
+			mouseover = RaytraceHelper.raytraceBlock(worldObj, getClosePosition(), getFarPosition());
 		} else {
 			mouseover = null;
 		}
@@ -169,7 +156,7 @@ public class EntityCamera extends EntityLivingBase {
 		super.onUpdate();
 	}
 
-	private Vec3 getMousePosition() {
+	public Vec3 getClosePosition() {
 		Vec3 pos = this.getPosition(1.0F);
 		pos.xCoord += RenderHelper.close.xCoord;
 		pos.yCoord += RenderHelper.close.yCoord;
@@ -177,41 +164,12 @@ public class EntityCamera extends EntityLivingBase {
 		return pos;
 	}
 
-	private Vec3 getFarPosition() {
+	public Vec3 getFarPosition() {
 		Vec3 pos = this.getPosition(1.0F);
 		pos.xCoord += RenderHelper.far.xCoord;
 		pos.yCoord += RenderHelper.far.yCoord;
 		pos.zCoord += RenderHelper.far.zCoord;
 		return pos;
-	}
-
-	public MovingObjectPosition raytraceBlock() {
-		return this.worldObj.rayTraceBlocks(getMousePosition(), getFarPosition());
-	}
-
-	public Entity raytraceEntity() {
-		Vec3 start = getMousePosition();
-		Vec3 end = getFarPosition();
-
-		MovingObjectPosition block = raytraceBlock();
-
-		if (block != null) {
-			List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(block.blockX, block.blockY, block.blockZ, block.blockX + 1, block.blockY + 1, block.blockZ + 1).expand(AABB_RANGE, AABB_RANGE, AABB_RANGE));
-
-			for (int i = 0; i < list.size(); i++) {
-				Entity entity = (Entity) list.get(i);
-				if (entity != null && this.canEntityBeSeen(entity) && entity.canBeCollidedWith()) {
-					AxisAlignedBB aabb = entity.boundingBox.expand(entity.getCollisionBorderSize(), entity.getCollisionBorderSize(), entity.getCollisionBorderSize());
-					MovingObjectPosition mob = aabb.calculateIntercept(start, end);
-
-					if (mob != null) {
-						return entity;
-					}
-				}
-			}
-		}
-
-		return null;
 	}
 
 	/* IGNORE */
