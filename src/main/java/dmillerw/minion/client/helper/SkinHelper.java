@@ -1,7 +1,6 @@
 package dmillerw.minion.client.helper;
 
 import com.google.common.collect.Maps;
-import dmillerw.minion.client.render.RenderMinion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IImageBuffer;
 import net.minecraft.client.renderer.ImageBufferDownload;
@@ -18,6 +17,21 @@ import java.util.Map;
  */
 public class SkinHelper {
 
+	public static final ResourceLocation STEVE = new ResourceLocation("textures/entity/steve.png");
+
+	public static final String[] SKINS = new String[]{"Russkoll", "Asyncronos", "CyanideX", "dmillerw", "Latchy11"};
+
+	public static int next = 0;
+
+	public static String getRandomSkin() {
+		String nextStr = SKINS[next];
+		next++;
+		if (next >= 5) {
+			next = 0;
+		}
+		return nextStr;
+	}
+
 	public static Map<String, ThreadDownloadImageData> downloadThreads = Maps.newHashMap();
 	public static Map<String, ResourceLocation> skins = Maps.newHashMap();
 
@@ -25,10 +39,10 @@ public class SkinHelper {
 		if (!player.isEmpty()) {
 			skins.put(player, getLocationSkin(player));
 			downloadThreads.put(player, getDownloadImageSkin(skins.get(player), player));
-			return skins.get(player) != null ? skins.get(player) : RenderMinion.TEXTURE;
+			return skins.get(player) != null ? skins.get(player) : STEVE;
 		}
 
-		return RenderMinion.TEXTURE;
+		return STEVE;
 	}
 
 	private static ThreadDownloadImageData getTextureSkin(String player) {
@@ -36,7 +50,7 @@ public class SkinHelper {
 	}
 
 	private static ThreadDownloadImageData getDownloadImageSkin(ResourceLocation par0ResourceLocation, String par1Str) {
-		return getDownloadImage(par0ResourceLocation, getSkinUrl(par1Str), RenderMinion.TEXTURE, new ImageBufferDownload());
+		return getDownloadImage(par0ResourceLocation, getSkinUrl(par1Str), STEVE, new ImageBufferDownload());
 	}
 
 	private static ThreadDownloadImageData getDownloadImage(ResourceLocation par0ResourceLocation, String par1Str, ResourceLocation par2ResourceLocation, IImageBuffer par3IImageBuffer) {

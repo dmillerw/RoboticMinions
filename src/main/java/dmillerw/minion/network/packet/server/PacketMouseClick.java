@@ -1,5 +1,6 @@
 package dmillerw.minion.network.packet.server;
 
+import dmillerw.minion.client.helper.SkinHelper;
 import dmillerw.minion.core.handler.MinionHandler;
 import dmillerw.minion.core.helper.RaytraceHelper;
 import dmillerw.minion.entity.EntityMinion;
@@ -90,6 +91,8 @@ public class PacketMouseClick extends AbstractPacket {
 					ForgeDirection side = ForgeDirection.getOrientation(block.sideHit);
 					EntityMinion minion = new EntityMinion(player.worldObj);
 					minion.setOwner(player.getCommandSenderName());
+					// Temporary
+					minion.setSkin(SkinHelper.getRandomSkin());
 					minion.setPosition((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ);
 					player.worldObj.spawnEntityInWorld(minion);
 				}
@@ -98,7 +101,7 @@ public class PacketMouseClick extends AbstractPacket {
 
 				if (block != null && block.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 					ForgeDirection side = ForgeDirection.getOrientation(block.sideHit);
-					selected.setTarget(Vec3.createVectorHelper((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ));
+					selected.setLocationTarget(Vec3.createVectorHelper((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ));
 				}
 			}
 		}
