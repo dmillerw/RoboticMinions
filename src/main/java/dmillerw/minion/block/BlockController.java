@@ -1,10 +1,10 @@
 package dmillerw.minion.block;
 
 import dmillerw.minion.RoboticMinions;
+import dmillerw.minion.core.ModCreativeTab;
 import dmillerw.minion.core.handler.GuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -18,7 +18,7 @@ public class BlockController extends Block {
 
 		setHardness(5F);
 		setResistance(5F);
-		setCreativeTab(CreativeTabs.tabBrewing);
+		setCreativeTab(ModCreativeTab.TAB);
 	}
 
 	@Override

@@ -1,7 +1,12 @@
 package dmillerw.minion.entity;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -9,19 +14,29 @@ import net.minecraft.world.World;
 /**
  * @author dmillerw
  */
-public class EntityMinion extends EntityLiving {
-
+public class EntityMinion extends EntityCreature {
 
 	public static final int DATA_OWNER = 20;
 	public static final int DATA_SKIN = 21;
 
 	private Vec3 locationTarget;
 
+	private EntityLivingBase attackTarget;
+
+	private boolean currentlyAttacking;
+
 	private String owner = "";
 	private String skin = "";
 
 	public EntityMinion(World world) {
 		super(world);
+
+		getNavigator().setAvoidsWater(true);
+		getNavigator().setCanSwim(true);
+
+		this.tasks.addTask(1, new EntityAIWander(this, 1.0D));
+		this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+		this.tasks.addTask(3, new EntityAILookIdle(this));
 
 		setSize(0.75F, 1F);
 	}
@@ -111,6 +126,10 @@ public class EntityMinion extends EntityLiving {
 
 		nbt.setString("owner", owner);
 		nbt.setString("skin", skin);
+
+		if (currentlyAttacking) {
+			nbt.setInteger("attackTarget", attackTarget.getEntityId());
+		}
 	}
 
 	@Override
@@ -126,6 +145,11 @@ public class EntityMinion extends EntityLiving {
 
 		setOwner(nbt.getString("owner"));
 		setSkin(nbt.getString("skin"));
+
+		if (nbt.hasKey("attackTarget")) {
+			attackTarget = (EntityLivingBase) worldObj.getEntityByID(nbt.getInteger("attackTarget"));
+			currentlyAttacking = true;
+		}
 	}
 
 }

@@ -6,7 +6,7 @@ import net.minecraft.block.Block;
 /**
  * @author dmillerw
  */
-public class BlockHandler {
+public class HandlerBlock {
 
 	public static Block blockController;
 
