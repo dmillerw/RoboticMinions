@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.minion.core.ModCreativeTab;
 import dmillerw.minion.entity.EntityMinion;
-import dmillerw.minion.lib.ModInfo;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,7 +19,7 @@ import net.minecraft.world.World;
  */
 public class ItemSyringeGun extends Item {
 
-	private IIcon syringeGunEmpty;
+	private IIcon syringeGun;
 
 	public ItemSyringeGun() {
 		super();
@@ -80,13 +79,13 @@ public class ItemSyringeGun extends Item {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIconFromDamage(int damage) {
-		return syringeGunEmpty;
+		return syringeGun;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IIconRegister register) {
-		syringeGunEmpty = register.registerIcon(ModInfo.RESOURCE_PREFIX + "syringe_gun_empty");
+		// syringeGun = register.registerIcon(ModInfo.RESOURCE_PREFIX + "syringe_gun_empty");
 	}
 
 }

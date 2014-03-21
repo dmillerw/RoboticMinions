@@ -107,13 +107,13 @@ public class ItemVial extends Item {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIconFromDamageForRenderPass(int damage, int pass) {
-		return (pass == 1 && damage == 1) ? vialOverlay : vial;
+		return (pass == 1) ? vialOverlay : vial;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getColorFromItemStack(ItemStack stack, int pass) {
-		return (pass == 1 && stack.getItemDamage() == 1) ? getColor(stack) : 0xFFFFFF; // Temporary
+		return (pass == 1 && stack.getItemDamage() == 1) ? getColor(stack) : pass == 1 ? 0x90AFBF : 0xFFFFFF;
 	}
 
 	@SideOnly(Side.CLIENT)
