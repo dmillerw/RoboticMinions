@@ -35,12 +35,6 @@ public class ItemVial extends Item {
 		return vial;
 	}
 
-	public static ItemStack getVial(ItemStack gun) {
-		ItemStack vial = new ItemStack(HandlerItem.itemVial, 1, 1);
-		vial.setTagCompound(gun.getTagCompound());
-		return vial;
-	}
-
 	public static boolean hasContents(ItemStack stack) {
 		if (!stack.hasTagCompound() || stack.getItemDamage() != 1 || stack.getItemDamage() != 1) {
 			return false;
@@ -107,13 +101,13 @@ public class ItemVial extends Item {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIconFromDamageForRenderPass(int damage, int pass) {
-		return (pass == 1) ? vialOverlay : vial;
+		return (pass == 1 && damage == 1) ? vialOverlay : vial;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getColorFromItemStack(ItemStack stack, int pass) {
-		return (pass == 1 && stack.getItemDamage() == 1) ? getColor(stack) : pass == 1 ? 0x90AFBF : 0xFFFFFF;
+		return (pass == 1 && stack.getItemDamage() == 1) ? getColor(stack) : 0xFFFFFF;
 	}
 
 	@SideOnly(Side.CLIENT)
