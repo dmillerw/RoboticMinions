@@ -98,10 +98,19 @@ public class PacketMouseClick extends AbstractPacket {
 				}
 			} else {
 				MovingObjectPosition block = RaytraceHelper.raytraceBlock(player.worldObj, locationClose, locationFar);
+				EntityLivingBase entity = RaytraceHelper.raytraceEntity(player.worldObj, locationClose, locationFar);
 
-				if (block != null && block.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+				if (entity == null && block != null && block.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 					ForgeDirection side = ForgeDirection.getOrientation(block.sideHit);
 					selected.setLocationTarget(Vec3.createVectorHelper((block.blockX + 0.5) + side.offsetX, block.blockY + side.offsetY, (block.blockZ + 0.5) + side.offsetZ));
+
+					if (selected.getAttackTarget() != null) {
+						selected.setAttackTarget(null);
+					}
+				} else {
+					if (entity != null) {
+						selected.setAttackTarget(entity);
+					}
 				}
 			}
 		}

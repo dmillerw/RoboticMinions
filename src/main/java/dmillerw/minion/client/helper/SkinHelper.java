@@ -19,14 +19,14 @@ public class SkinHelper {
 
 	public static final ResourceLocation STEVE = new ResourceLocation("textures/entity/steve.png");
 
-	public static final String[] SKINS = new String[]{"Russkoll", "Asyncronos", "CyanideX", "dmillerw", "Latchy11"};
+	public static final String[] SKINS = new String[]{"Russkoll", "Asyncronous", "CyanideX", "dmillerw", "Latchy11", "Mrabow"};
 
 	public static int next = 0;
 
 	public static String getRandomSkin() {
 		String nextStr = SKINS[next];
 		next++;
-		if (next >= 5) {
+		if (next >= SKINS.length) {
 			next = 0;
 		}
 		return nextStr;

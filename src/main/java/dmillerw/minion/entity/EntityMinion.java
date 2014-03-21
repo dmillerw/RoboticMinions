@@ -2,10 +2,6 @@ package dmillerw.minion.entity;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
@@ -23,20 +19,11 @@ public class EntityMinion extends EntityCreature {
 
 	private EntityLivingBase attackTarget;
 
-	private boolean currentlyAttacking;
-
 	private String owner = "";
 	private String skin = "";
 
 	public EntityMinion(World world) {
 		super(world);
-
-		getNavigator().setAvoidsWater(true);
-		getNavigator().setCanSwim(true);
-
-		this.tasks.addTask(1, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
-		this.tasks.addTask(3, new EntityAILookIdle(this));
 
 		setSize(0.75F, 1F);
 	}
@@ -60,15 +47,14 @@ public class EntityMinion extends EntityCreature {
 	}
 
 	@Override
-	public boolean isAIEnabled() {
-		return true;
-	}
+	public void onEntityUpdate() {
+		super.onEntityUpdate();
 
-	@Override
-	protected void applyEntityAttributes() {
-		super.applyEntityAttributes();
+		EntityPlayer closest = worldObj.getClosestPlayerToEntity(this, 16D);
 
-		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(256.0D);
+		if (closest != null && closest.getCommandSenderName().equals(owner)) {
+			getLookHelper().setLookPosition(closest.posX, closest.posY + (double) closest.getEyeHeight(), closest.posZ, 10.0F, (float) getVerticalFaceSpeed());
+		}
 	}
 
 	public Vec3 getLocationTarget() {
@@ -77,13 +63,14 @@ public class EntityMinion extends EntityCreature {
 
 	public void setLocationTarget(Vec3 locationTarget) {
 		this.locationTarget = locationTarget;
-		if (locationTarget != null) {
-			getNavigator().tryMoveToXYZ(locationTarget.xCoord, locationTarget.yCoord, locationTarget.zCoord, 1F);
-		} else {
-			if (getNavigator().getPath() != null) {
-				getNavigator().clearPathEntity();
-			}
-		}
+	}
+
+	public EntityLivingBase getAttackTarget() {
+		return attackTarget;
+	}
+
+	public void setAttackTarget(EntityLivingBase attackTarget) {
+		this.attackTarget = attackTarget;
 	}
 
 	public String getOwner() {
@@ -126,10 +113,6 @@ public class EntityMinion extends EntityCreature {
 
 		nbt.setString("owner", owner);
 		nbt.setString("skin", skin);
-
-		if (currentlyAttacking) {
-			nbt.setInteger("attackTarget", attackTarget.getEntityId());
-		}
 	}
 
 	@Override
@@ -145,11 +128,6 @@ public class EntityMinion extends EntityCreature {
 
 		setOwner(nbt.getString("owner"));
 		setSkin(nbt.getString("skin"));
-
-		if (nbt.hasKey("attackTarget")) {
-			attackTarget = (EntityLivingBase) worldObj.getEntityByID(nbt.getInteger("attackTarget"));
-			currentlyAttacking = true;
-		}
 	}
 
 }
