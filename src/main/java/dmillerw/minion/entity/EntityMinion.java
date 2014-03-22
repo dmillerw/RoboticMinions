@@ -12,15 +12,15 @@ import net.minecraft.world.World;
  */
 public class EntityMinion extends EntityCreature {
 
-	public static final int DATA_OWNER = 20;
-	public static final int DATA_SKIN = 21;
+	private static final int DATA_OWNER = 20;
+	private static final int DATA_SKIN = 21;
 
-	private Vec3 locationTarget;
+	public Vec3 locationTarget;
 
 	private EntityLivingBase attackTarget;
 
-	private String owner = "";
-	private String skin = "";
+	public String owner = "";
+	public String skin = "";
 
 	public EntityMinion(World world) {
 		super(world);
