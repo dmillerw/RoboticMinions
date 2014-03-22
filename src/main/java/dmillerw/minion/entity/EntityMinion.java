@@ -14,6 +14,12 @@ public class EntityMinion extends EntityCreature {
 
 	private static final int DATA_OWNER = 20;
 	private static final int DATA_SKIN = 21;
+	private static final int DATA_TYPE = 22;
+
+	public static final byte MINION_PLAYER = 0;
+	public static final byte MINION_COW = 1;
+	public static final byte MINION_SHEEP = 2;
+	public static final byte MINION_PIG = 3;
 
 	public Vec3 locationTarget;
 
@@ -22,9 +28,12 @@ public class EntityMinion extends EntityCreature {
 	public String owner = "";
 	public String skin = "";
 
+	private byte minionType = MINION_PLAYER;
+
 	public EntityMinion(World world) {
 		super(world);
 
+		// TODO Assign size based on type
 		setSize(0.75F, 1F);
 	}
 
@@ -34,6 +43,7 @@ public class EntityMinion extends EntityCreature {
 
 		dataWatcher.addObject(DATA_OWNER, "");
 		dataWatcher.addObject(DATA_SKIN, "");
+		dataWatcher.addObject(DATA_TYPE, minionType);
 	}
 
 	@Override
@@ -91,6 +101,18 @@ public class EntityMinion extends EntityCreature {
 		dataWatcher.updateObject(DATA_SKIN, skin);
 	}
 
+	public byte getType() {
+		return minionType;
+	}
+
+	public void setType(byte type) {
+		this.minionType = type;
+		dataWatcher.updateObject(DATA_SKIN, type);
+
+		// TODO Assign size based on type
+		setSize(0.75F, 1F);
+	}
+
 	public void select() {
 		jump();
 	}
@@ -113,6 +135,7 @@ public class EntityMinion extends EntityCreature {
 
 		nbt.setString("owner", owner);
 		nbt.setString("skin", skin);
+		nbt.setByte("type", minionType);
 	}
 
 	@Override
@@ -128,6 +151,7 @@ public class EntityMinion extends EntityCreature {
 
 		setOwner(nbt.getString("owner"));
 		setSkin(nbt.getString("skin"));
+		setType(nbt.getByte("type"));
 	}
 
 }
